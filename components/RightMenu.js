@@ -1,7 +1,7 @@
 'use client';   
 import {useState,useEffect } from 'react';
 
-export default function RightMenu({ onItemClick, onItemDoubleClick }) {
+export default function RightMenu({ onItemClick, onItemDoubleClick, itemsTotalCount, setItemsTotalCount}) {
     const [items, setItems] = useState([]);
     const [error, setError] = useState(null);
     const [isOpen, setIsOpen] = useState(true);
@@ -41,6 +41,7 @@ export default function RightMenu({ onItemClick, onItemDoubleClick }) {
           if(!done){
             done = true;
             setItems(awaitRes.result.results);
+            setItemsTotalCount(awaitRes.result.results.length);
           }
         })
         .catch((err) => setError(err.message));
@@ -90,6 +91,15 @@ export default function RightMenu({ onItemClick, onItemDoubleClick }) {
                      }
 
                 </ul>
+
+                     <div className="mb-6 mt-5 bg-blue-300 border-t-1">
+                        
+                        <span className="inline-flex items-center ml-45 mt-3 mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                            {itemsTotalCount} / {itemsTotalCount} </span>
+                         
+                    </div>      
+
+
             </div>
         </div>
     

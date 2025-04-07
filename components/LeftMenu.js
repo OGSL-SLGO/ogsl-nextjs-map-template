@@ -3,9 +3,10 @@ import {useState,useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 
-export default function LeftMenu({ onItemClick }) {
+export default function LeftMenu({ onLeftMenuItemClick, onLeftMenuItemDoubleClick, itemsTotalCount }) {
     const [filteredItems, setFilteredItems] = useState([]);
     const [error, setError] = useState(null);
+    const [filteredCount, setFilteredCount] = useState(0);
     const [isFilterClicked, setIsFilterClicked] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const catalogueUrl = 'https://catalogue.ogsl.ca';
@@ -13,18 +14,6 @@ export default function LeftMenu({ onItemClick }) {
     let urlBaseSearch = `${catalogueUrl}/api/3/action/package_search?q=${baseQuery}`;
     
     let urlCustomSearch = `${catalogueUrl}/api/3/action/package_search?q=`;
-
-    const ProgressBar = dynamic(() => import('./ProgressBar'), {ssr: false})
-
-
-    const onLeftMenuItemClick = (selectedItem) => {
-        onItemClick(selectedItem);
-    };
-
-    const onLeftMenuItemDoubleClick = (selectedItem) => {
-        window.open(`${catalogueUrl}/dataset/${selectedItem.name}`);
-    };
-
     const handleChange = (event) => {
         setInputValue(event.target.value); // Update state with input value
       };
@@ -51,6 +40,7 @@ export default function LeftMenu({ onItemClick }) {
                 const awaitRes = await response.json();
 
                 setFilteredItems(awaitRes.result.results);
+                setFilteredCount(awaitRes.result.results.length);
                 }catch (error) {
                     console.log('Error :: ' + error.message);
                     setError(error.message);
@@ -100,8 +90,8 @@ export default function LeftMenu({ onItemClick }) {
                 
                 </div>
                 <div className="relative mb-6 bg-[#e8eef1]">
-                    <div className="inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <ul className="space-y-2 font-medium">
+                    <div className="inset-y-0 left-0 flex items-center pl-3">
+                        <ul className="space-y-2 font-medium mb-5">
                         {
                             filteredItems.map((item) => 
                                 <li className="hover:text-blue-500, cursor-pointer bg-white mt-5 ml-5 mr-5 p-5" 
@@ -123,9 +113,13 @@ export default function LeftMenu({ onItemClick }) {
 
                     <div className="mt-3 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nombre de jeux de données
 
-                      <div className="p-4">
-                            <ProgressBar progress={70} />
-                      </div>
+                        <div className="mb-6 mt-5 bg-blue-300 border-t-1">
+                            
+                            <span className="inline-flex items-center ml-45 mt-3 mb-3 text-sm font-medium text-gray-900 dark:text-white">
+                                {filteredCount} / {itemsTotalCount} </span>
+                            
+                            
+                        </div>   
                     </div>
 
                     <div className="inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
