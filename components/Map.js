@@ -2,15 +2,15 @@
 
 import 'leaflet/dist/leaflet.css';
 import '../app/globals.css';
-import { MapContainer, Polygon, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from 'leaflet';
 
 
 
 const FitBounds = ({ bounds }) => {
-
-    const map = useMap();
+    console.log('bounds ::::: ' + JSON.stringify(bounds));                
     if (bounds) {
+        const map = useMap();
         ClearMap({map});
         var polygon = L.geoJSON(bounds, {color: 'red'}).addTo(map);
         

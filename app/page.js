@@ -1,17 +1,21 @@
 'use client';
-import Map from "@/components/Map";
 import { useState} from 'react';
 import RightMenu from "@/components/RightMenu";
 import LeftMenu from "@/components/LeftMenu";
+import LeftMenuSelect from "@/components/LeftMenuSelect";
+import dynamic from "next/dynamic";
 
 
 export default function Home() {
-  
   const catalogueUrl = 'https://catalogue.ogsl.ca';
   const [center] = useState([47.485, -62.48]); // Default center
   const [selectedLeftMenu, setSelectedLeftMenu] = useState('');
   const [bounds, setBounds] = useState(null);
   const [itemsTotalCount, setItemsTotalCount] = useState(0);
+
+  const Map = dynamic(() => import('@/components/Map'), {
+    ssr: false
+  });
 
   const handleLeftMenuSelect = (selectedItem) => {
     console.log('SPATIAL LEFT :: ' + JSON.stringify(selectedItem.spatial.coordinates));
@@ -39,7 +43,8 @@ export default function Home() {
       <main>
 
         <div className="fixed left-10 z-50"> 
-            <LeftMenu itemsTotalCount={itemsTotalCount} onLeftMenuItemClick={handleLeftMenuSelect} onLeftMenuItemDoubleClick={handleLeftMenuItemDoubleClick}/>
+            
+            <LeftMenuSelect itemsTotalCount={itemsTotalCount} onLeftMenuItemClick={handleLeftMenuSelect} onLeftMenuItemDoubleClick={handleLeftMenuItemDoubleClick}/>
         </div>
         
         <div className="relative z-30">

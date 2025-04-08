@@ -1,9 +1,8 @@
 'use client';   
 import {useState,useEffect } from 'react';
-import dynamic from 'next/dynamic';
 
 
-export default function LeftMenu({ onLeftMenuItemClick, onLeftMenuItemDoubleClick, itemsTotalCount }) {
+export default function LeftMenu({ itemsTotalCount,onLeftMenuItemClick, onLeftMenuItemDoubleClick }) {
     const [filteredItems, setFilteredItems] = useState([]);
     const [error, setError] = useState(null);
     const [filteredCount, setFilteredCount] = useState(0);
@@ -12,6 +11,8 @@ export default function LeftMenu({ onLeftMenuItemClick, onLeftMenuItemDoubleClic
     const catalogueUrl = 'https://catalogue.ogsl.ca';
     const baseQuery = 'projects=*baseline*';
     let urlBaseSearch = `${catalogueUrl}/api/3/action/package_search?q=${baseQuery}`;
+
+      
     
     let urlCustomSearch = `${catalogueUrl}/api/3/action/package_search?q=`;
     const handleChange = (event) => {
@@ -78,8 +79,8 @@ export default function LeftMenu({ onLeftMenuItemClick, onLeftMenuItemDoubleClic
                       placeholder="Rechercher" required  onChange={handleChange} />
                 
                     <button id="btnFilter" onClick={() => setIsFilterClicked(true)} type="button" aria-controls="drawer-navigation" className="text-gray-400 bg-transparent 
-                    hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-15 h-8 top-5 mt-2.5 end-2.5 items-center 
-                    justify-center dark:hover:bg-gray-600 dark:hover:text-white" >
+                            hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-15 h-8 top-5 mt-2.5 end-2.5 items-center 
+                            justify-center dark:hover:bg-gray-600 dark:hover:text-white" >
 
                         <span className="">Filtrer</span>
                     </button>
