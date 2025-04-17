@@ -13,10 +13,13 @@
   "dependencies": {
     "@react-leaflet/core": "^3.0.0",
     "flowbite-react": "^0.11.5",
+    "i18next": "^25.0.0",
     "leaflet": "^1.9.4",
     "next": "^15.2.3",
+    "next-i18next": "^15.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^15.4.1",
     "react-leaflet": "^5.0.0"
   },
   "devDependencies": {

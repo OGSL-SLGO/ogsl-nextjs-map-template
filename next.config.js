@@ -19,3 +19,9 @@ module.exports = withFlowbiteReact({
         BASE_PATH: basePath,
     }
 });
+
+const { i18n } = require('./next-i18next.config')
+
+module.exports = {
+  i18n,
+}

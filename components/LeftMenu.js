@@ -5,7 +5,7 @@ import ItemsList from "@/components/ItemsList";
 import Image from 'next/image';
 import ModalAPropos from '@/components/ModalAPropos';
 import config from "@/app/config.js";
-
+import { useTranslation } from 'next-i18next';
 
 
 export default function LeftMenu({ onInfoClick, onItemClick }) {
@@ -18,6 +18,7 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
     const [badges, setBadges] = useState([]);
     const [selectedValue, setSelectedValue] = useState("");
     const [fetchURLFilter, setFetchURLFilter] = useState(config.base_query);
+    const { t } = useTranslation('leftmenu');
 
     
     const basePath = process.env.BASE_PATH || '';
@@ -125,6 +126,8 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
         console.log("Update filter string remove :: " + filterString);
         setFetchURLFilter(filterString);
     }
+
+
 
 
     useEffect(() => {
