@@ -5,7 +5,7 @@ import ItemsList from "@/components/ItemsList";
 import Image from 'next/image';
 import ModalAPropos from '@/components/ModalAPropos';
 import config from "@/app/config.js";
-import { useTranslation } from 'next-i18next';
+import { useTranslation } from 'next-intl';
 
 
 export default function LeftMenu({ onInfoClick, onItemClick }) {
