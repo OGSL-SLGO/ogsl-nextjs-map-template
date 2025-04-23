@@ -1,11 +1,12 @@
 'use client';
-import { useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import ItemsList from "@/components/ItemsList";
 import Image from 'next/image';
 import ModalAPropos from '@/components/ModalAPropos';
 import config from "@/app/config.js";
-import { useTranslation } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 
 export default function LeftMenu({ onInfoClick, onItemClick }) {
@@ -18,7 +19,9 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
     const [badges, setBadges] = useState([]);
     const [selectedValue, setSelectedValue] = useState("");
     const [fetchURLFilter, setFetchURLFilter] = useState(config.base_query);
-    const { t } = useTranslation('leftmenu');
+    const t = useTranslations();
+    const [locale,setLocale] = useState('fr');
+    const router = useRouter();
 
     
     const basePath = process.env.BASE_PATH || '';
@@ -156,6 +159,34 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
         fetchData();
     }, [fetchURLFilter]);
 
+    useEffect(() => {
+
+        const cookieLocale = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('NEXT_LOCALE='))
+        ?.split('=')[1];
+
+        console.log("COOKIE LOCALE :: " + cookieLocale);
+
+        if (cookieLocale) {
+            setLocale(cookieLocale);
+        } else {
+            const browserLocale = navigator.language.slice(0, 2);
+            setLocale(browserLocale);
+            document.cookie = `NEXT_LOCALE=${browserLocale};`;
+            console.log("BROWSER LOCALE :: " + browserLocale);
+            router.refresh(); // Refresh the page to apply the new locale
+        }
+
+    },[router]);
+
+    const changeLocale = (newLocale) => {
+        console.log("NEW LOCALE :: " + newLocale);
+        setLocale(newLocale);
+        document.cookie = `NEXT_LOCALE=${newLocale};`;
+        router.refresh(); // Refresh the page to apply the new locale
+    }
+
 
     return (
         <div id="sidebar">
@@ -181,6 +212,12 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
                             <span className="mt-3 self-center text-xl font-semibold whitespace-nowra">{ config.title.fr }</span>
                         </div>
                         <a className="mr-10" id="headerTranslation" href="">EN</a>
+                        <button onClick={() => changeLocale("en")} className= {`border p-2  rounded-md text-sm font-bold ${locale ==="en" && "bg-white text-black"}`}>
+                         EN
+                        </button>
+                        <button onClick={() => changeLocale("fr")} className= {`border p-2  rounded-md text-sm font-bold ${locale ==="fr" && "bg-white text-black"}`}>
+                         FR
+                        </button>
                         <button onClick={toggleSidebar} className="flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="logo-sidebar" data-drawer-toggle="logo-sidebar">
                             <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -191,7 +228,7 @@ export default function LeftMenu({ onInfoClick, onItemClick }) {
                     
                     <ul className="space-y-2 font-medium">
                         <li>
-
+                            {t("test")}
                             <form className="max-w-lg mx-auto">
                                 <label>Filtrer par</label>
                                 <div className="flex">
