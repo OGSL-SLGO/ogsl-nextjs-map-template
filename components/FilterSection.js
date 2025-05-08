@@ -7,13 +7,12 @@ import {
   ModalHeader,
   FloatingLabel,
   Select,
+  Datepicker,
 } from "flowbite-react";
 import { useState } from "react";
 import { getLocale } from "@/app/get-locale";
 
-
 function getBadge(filterType, value, lang, removeBadge) {
-
   if (!value) return null; // Return null if value is empty
   const t = getLocale(lang);
   return (
@@ -36,7 +35,6 @@ function getBadge(filterType, value, lang, removeBadge) {
 }
 
 export function SearchFilter({ lang, setBadges }) {
-
   const [openModal, setOpenModal] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -89,7 +87,85 @@ export function SearchFilter({ lang, setBadges }) {
   );
 }
 
-export function FilterItems({ filter_type, lang, setBadges}) {
+function TimeFilter({ lang, setBadges }) {
+  const [openModal, setOpenModal] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const t = getLocale(lang);
+
+  function onCloseModal() {
+    if (!startDate && !endDate) {
+      setOpenModal(false);
+      return;
+    }
+    console.log("Start Date:", startDate);
+    setBadges((prevBadges) => ({
+      ...prevBadges,
+      start_date: startDate,
+    }));
+
+    console.log("End Date:", endDate);
+    setBadges((prevBadges) => ({
+      ...prevBadges,
+      end_date: endDate,
+    }));
+    setOpenModal(false);
+  }
+  return (
+    <>
+      <Button
+        color="alternative"
+        pill
+        size="xs"
+        onClick={() => setOpenModal(true)}
+      >
+        {t.time}
+      </Button>
+      <Modal
+        dismissible
+        show={openModal}
+        size="lg"
+        onClose={onCloseModal}
+        popup
+      >
+        <ModalHeader>
+          {t.filter_by} {t.time}
+        </ModalHeader>
+        <ModalBody className="overflow-visible flex flex-col gap-2">
+          <div className="flex flex-row items-center gap-2">
+            <div>{t.from}</div>
+            <Datepicker
+              language={`${lang}-CA`}
+              className="w-1/2"
+              onChange={(date) => setStartDate(date.value)}
+              value={startDate}
+              selected={startDate}
+              maxDate={endDate || new Date()}
+              labelTodayButton={t.today}
+              labelClearButton={t.clear}
+              placeholder={t.start_date}
+            />
+            <div>{t.to}</div>
+            <Datepicker
+              className="w-1/2"
+              language={`${lang}-CA`}
+              onChange={(date) => setEndDate(date.value)}
+              value={endDate}
+              selected={endDate}
+              minDate={startDate} // Disable dates before the start date
+              maxDate={new Date()} // Disable future dates
+              labelTodayButton={t.today}
+              labelClearButton={t.clear}
+              placeholder={t.end_date}
+            />
+          </div>
+        </ModalBody>
+      </Modal>
+    </>
+  );
+}
+
+function FilterItems({ filter_type, lang, setBadges }) {
   const [openModal, setOpenModal] = useState(false);
   const [query, setQuery] = useState("");
   const t = getLocale(lang);
@@ -164,7 +240,7 @@ export function FilterItems({ filter_type, lang, setBadges}) {
   );
 }
 
-export default function FilterSection({ lang, badges, setBadges}) {
+export default function FilterSection({ lang, badges, setBadges }) {
   const t = getLocale(lang);
 
   const removeBadge = (filterType) => {
@@ -186,21 +262,17 @@ export default function FilterSection({ lang, badges, setBadges}) {
           setBadges={setBadges}
         />
         <FilterItems filter_type="projects" lang={lang} setBadges={setBadges} />
-        <FilterItems filter_type="eov" lang={lang} setBadges={setBadges}/>
-        <FilterItems filter_type="time" lang={lang} setBadges={setBadges}/>
-        <FilterItems
-          filter_type="spatial"
-          lang={lang}
-          setBadges={setBadges}
-        />
+        <FilterItems filter_type="eov" lang={lang} setBadges={setBadges} />
+        <TimeFilter lang={lang} setBadges={setBadges} />
+        <FilterItems filter_type="spatial" lang={lang} setBadges={setBadges} />
       </div>
 
       {/* Render Badges */}
       <div className="m-1 pb-2 flex flex-wrap gap-1 justify-center">
         {console.log("badges length :: ", Object.entries(badges).length)}
-        {Object.entries(badges).map(([filterType, value]) => (
-          getBadge(filterType, value, lang, removeBadge)
-        ))}
+        {Object.entries(badges).map(([filterType, value]) =>
+          getBadge(filterType, value, lang, removeBadge),
+        )}
       </div>
     </>
   );
