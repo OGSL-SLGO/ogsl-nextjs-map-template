@@ -79,31 +79,17 @@ function AppContent({ lang, setLang }) {
   // Use callback for fetching data
   const fetchData = useCallback(async () => {
     setLoading(true);
-    try {
-      console.log("Fetching data from CKAN API...", fetchURL);
-      const response = await fetch(fetchURL);
-      if (!response.ok) {
-        throw new Error("There was an error fetching the data from CKAN API");
-      }
-      const awaitRes = await response.json();
-
-      setFilteredItems(awaitRes.result.results);
-      fillOrganizationAndProjectLists(awaitRes.result.results);
-      setInputValue("");
-      if (fetchURLFilter) {
-        setFilteredResultsCount(awaitRes.result.results.length);
-      } else {
-        setTotalResultsCount(awaitRes.result.results.length);
-      }
-      if (badgeCount === 0) {
-        setFilteredResultsCount(awaitRes.result.results.length);
-      }
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchURL, fetchURLFilter, badgeCount]);
+    fetch("/packages.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setTotalResultsCount(data.length);
+        fillOrganizationAndProjectLists(data);
+        setFilteredItems(data);
+        setFilteredResultsCount(data.length);
+      })
+      .then(() => setLoading(false))
+      .catch((error) => console.error("Error loading packages:", error));
+  }, [badgeCount]);
 
   useEffect(() => {
     fetchData();
@@ -143,6 +129,17 @@ function AppContent({ lang, setLang }) {
     }
   };
 
+  function fetchDataSetInfo(id) {
+    fetch(`${catalogueUrl}/api/3/action/package_show?id=${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setDatasetInfo(data.result);
+      })
+      .catch((error) => {
+        console.error("Error loading dataset info:", error);
+      });
+  }
+
   // Function to fill organization and project lists
   const fillOrganizationAndProjectLists = (items) => {
     let orgList = new Set();
@@ -167,7 +164,7 @@ function AppContent({ lang, setLang }) {
   const handleListItemClick = useCallback(
     (selectedItem) => {
       setBounds(selectedItem.spatial);
-      setDatasetInfo(selectedItem);
+      fetchDataSetInfo(selectedItem.id);
       openDrawer();
     },
     [openDrawer],
